@@ -7,8 +7,8 @@
 
 import SessionTypeKit
 
-final class ATMServer: @unchecked Sendable {
-    @Lazy var bankAccount: BankAccount
+final class ATMController: @unchecked Sendable {
+    var bankAccount: BankAccount!
 
     @Sendable public func startATMInteraction(_ endpoint: consuming ATMServerProtocol.Start) async {
         let pinCoupling = await Session.recv(from: endpoint)

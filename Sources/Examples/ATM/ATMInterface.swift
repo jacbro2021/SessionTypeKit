@@ -7,7 +7,7 @@
 
 import SessionTypeKit
 
-final class ATMClient: Sendable {
+final class ATMInterface: Sendable {
     @Sendable public func startATMInteraction(_ endpoint: consuming ATMServerProtocol.Start.Dual) async {
         let pin = getIntInput(prompt: "Enter your pin:", errorMessage: "Invalid pin. Terminating...")
         let pinVerification = await Session.send(pin, on: endpoint)

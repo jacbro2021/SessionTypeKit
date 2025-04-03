@@ -7,4 +7,4 @@
 
 import SessionTypeKit
 
-await Session.create(ATMServer().startATMInteraction, ATMClient().startATMInteraction)
+await Session.create(ATMInterface().startATMInteraction, ATMController().startATMInteraction)
