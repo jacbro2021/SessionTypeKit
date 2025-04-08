@@ -7,13 +7,21 @@
 
 import SessionTypeKit
 
-enum ATMServerProtocol {
-    typealias Start = Endpoint<Empty, Coupling<Int, Endpoint<Or<InteractionProtocol, ErrorProtocol>, Empty>>>
-    typealias InteractionProtocol = Endpoint<Coupling<String, Endpoint<Or<DepositProtocol, WithdrawProtocol>, Empty>>, Empty>
-    
-    typealias DepositProtocol = Endpoint<Empty, Coupling<Double, Endpoint<Or<SuccessProtocol, ErrorProtocol>, Empty>>>
-    typealias WithdrawProtocol = Endpoint<Empty, Coupling<Double, Endpoint<Or<SuccessProtocol, ErrorProtocol>, Empty>>>
-    
-    typealias SuccessProtocol = Endpoint<Coupling<String, Endpoint<Empty, Empty>>, Empty>
-    typealias ErrorProtocol = Endpoint<Coupling<String, Endpoint<Empty, Empty>>, Empty>
+enum ATMProtocol {
+    typealias Pin = Int
+    typealias AtmDeposit = Recv<Int, Send<Int, Close>>
+    typealias AtmWithdraw = Recv<Int, Close>
+    typealias AtmServer =
+    Recv<Pin,
+        Choose<
+            Offer<
+                AtmDeposit,
+                AtmWithdraw
+            >,
+            Close
+        >
+    >
 }
+
+
+

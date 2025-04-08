@@ -8,78 +8,40 @@
 import SessionTypeKit
 
 final class ATMInterface: Sendable {
-    @Sendable public func startATMInteraction(_ endpoint: consuming ATMServerProtocol.Start.Dual) async {
-        let pin = getIntInput(prompt: "Enter your pin:", errorMessage: "Invalid pin. Terminating...")
-        let pinVerification = await Session.send(pin, on: endpoint)
-        let pinVerificationResult = await Session.offer(pinVerification)
+    
+    @Sendable public func startATMInteraction(_ endpoint: consuming ATMProtocol.AtmServer.Dual,
+                                              using session: Session.Dual)
+    async {
+        let offerEndpoint = await session.send(1234, on: endpoint)
+        let choice = await session.offer(offerEndpoint)
+
+        switch consume choice {
+        case .left(let success):
+           
+            let interactionChoice = getIntInput(prompt: "Enter 1 to deposit, 2 to withdraw",
+                                                errorMessage: "Invalid number selected",
+                                                in: 1...3)
+            if interactionChoice == 1 {
+                let depositEndpoint = await session.left(success)
+                let amount = getIntInput(prompt: "Enter the amount to deposit",
+                                         errorMessage: "Invalid deposit amount entered",
+                                         in: 0...100)
+                let balanceEndpoint = await session.send(amount, on: depositEndpoint)
+                let balanceTuple = await session.recv(from: balanceEndpoint)
+                print(balanceTuple.getValue())
+                session.close(balanceTuple.getEndpoint())
+            } else {
+                let withdrawEndpoint = await session.right(success)
+                let amount = getIntInput(prompt: "Enter the amount to withdraw",
+                                         errorMessage: "Invalid deposit amount entered",
+                                         in: 0...100)
+                let closeEndpoint = await session.send(amount, on: withdrawEndpoint)
+                session.close(closeEndpoint)
+            }
             
-        switch consume pinVerificationResult {
-        case .left(let interactionEndpoint):
-            await atmServerAuth(interactionEndpoint.flip())
-        case .right(let errorEndpoint):
-            await atmServerError(errorEndpoint.flip())
+        case .right(let failure):
+            Session.close(failure)
         }
-    }
-    
-    private func atmServerAuth(_ endpoint: consuming ATMServerProtocol.InteractionProtocol.Dual) async {
-        let interactionTuple = await Session.recv(from: endpoint)
-        let msg = interactionTuple.getValue()
-        let interactionChoiceEndpoint = interactionTuple.getEndpoint()
-        
-        print(msg)
-        let interactionSelection = getIntInput(prompt: "Choose an option: \n1. Deposit \n2. Withdraw",
-                                               errorMessage: "Invalid option selected.",
-                                               in: 1 ... 3)
-        
-        if interactionSelection == 1 {
-            await atmServerDeposit(await Session.left(interactionChoiceEndpoint).flip())
-        } else if interactionSelection == 2 {
-            await atmServerWithdraw(await Session.right(interactionChoiceEndpoint).flip())
-        }
-    }
-    
-    private func atmServerDeposit(_ endpoint: consuming ATMServerProtocol.DepositProtocol.Dual) async {
-        let amount = getDoubleInput(prompt: "Enter the amount to deposit: ",
-                                    errorMessage: "Invalid amount entered. Terminating...")
-        let statusChoice = await Session.send(amount, on: endpoint)
-        let choice = await Session.offer(statusChoice)
-        switch consume choice {
-        case .left(let successEndpoint):
-            await atmServerSuccess(successEndpoint.flip())
-        case .right(let errorEndpoint):
-            await atmServerError(errorEndpoint.flip())
-        }
-    }
-    
-    private func atmServerWithdraw(_ endpoint: consuming ATMServerProtocol.WithdrawProtocol.Dual) async {
-        let amount = getDoubleInput(prompt: "Enter the amount to withdraw: ",
-                                    errorMessage: "Invalid amount entered. Terminating...")
-        let statusChoice = await Session.send(amount, on: endpoint)
-        let choice = await Session.offer(statusChoice)
-        switch consume choice {
-        case .left(let successEndpoint):
-            await atmServerSuccess(successEndpoint.flip())
-        case .right(let errorEndpoint):
-            await atmServerError(errorEndpoint.flip())
-        }
-    }
-    
-    private func atmServerSuccess(_ endpoint: consuming ATMServerProtocol.SuccessProtocol.Dual) async {
-        let successTuple = await Session.recv(from: endpoint)
-        let msg = successTuple.getValue()
-        let finalEndpoint = successTuple.getEndpoint()
-        print(msg)
-        
-        Session.close(finalEndpoint)
-    }
-    
-    private func atmServerError(_ endpoint: consuming ATMServerProtocol.ErrorProtocol.Dual) async {
-        let errorTuple = await Session.recv(from: endpoint)
-        let msg = errorTuple.getValue()
-        let finalEndpoint = errorTuple.getEndpoint()
-        print(msg)
-        
-        Session.close(finalEndpoint)
     }
     
     private func getIntInput(prompt: String, errorMessage: String, in range: ClosedRange<Int>? = nil) -> Int {
@@ -90,19 +52,7 @@ final class ATMInterface: Sendable {
             guard let range else { return input }
             if range.contains(input) { return input }
         }
-        
-        fatalError(errorMessage)
-    }
-    
-    private func getDoubleInput(prompt: String, errorMessage: String, in range: ClosedRange<Double>? = nil) -> Double {
-        print(prompt)
-        if let rawInput = readLine(),
-           let input = Double(rawInput)
-        {
-            guard let range else { return input }
-            if range.contains(input) { return input }
-        }
-        
+            
         fatalError(errorMessage)
     }
 }

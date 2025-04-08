@@ -19,7 +19,7 @@ public struct Coupling<A, B: ~Copyable>: ~Copyable {
     /// Initializes a coupling with the given value as well as the
     /// provided non-copyable endpoint. Consumes the provided
     /// endpoint.
-    init(_ value: A, _ endpoint: consuming B) {
+    init(_ value: consuming A, _ endpoint: consuming B) {
         self.value = value
         self.endpoint = endpoint
     }
