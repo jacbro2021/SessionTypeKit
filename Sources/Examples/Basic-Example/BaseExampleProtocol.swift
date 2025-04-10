@@ -8,6 +8,7 @@
 import Foundation
 import SessionTypeKit
 
-class BaseExampleProtocol {
-    typealias proto = Endpoint<Empty, Coupling<Int, Endpoint<Empty, Empty>>>
+enum BaseExampleProtocol {
+    // The server receives an Int, sends back an Int, then closes the session.
+    typealias BaseServer = Recv<Int, Send<Int, Close>>
 }

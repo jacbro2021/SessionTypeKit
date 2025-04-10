@@ -7,4 +7,4 @@
 
 import SessionTypeKit
 
-await Session.create(BaseExampleSender().start, BaseExampleReceiver().start)
+await Session.create(BaseExampleController().startInteraction, BaseExampleInterface().startInteraction)
