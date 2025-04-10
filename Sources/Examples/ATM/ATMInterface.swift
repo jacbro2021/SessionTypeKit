@@ -8,9 +8,8 @@
 import SessionTypeKit
 
 final class ATMInterface: Sendable {
-    
     @Sendable public func startATMInteraction(_ endpoint: consuming ATMProtocol.AtmServer.Dual,
-                                              using session: Session.Dual)
+                                              using session: DualSession.Type)
     async {
         let offerEndpoint = await session.send(1234, on: endpoint)
         let choice = await session.offer(offerEndpoint)
