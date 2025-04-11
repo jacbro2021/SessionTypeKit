@@ -91,3 +91,130 @@ enum TestBaseExampleProtocol {
     #expect(receivedResult != nil)
     #expect(receivedResult! == 43)
 }
+
+
+// MARK: - Concurrency‑Safe Test State for Basic Branch
+actor BasicBranchState {
+    static let shared = BasicBranchState()
+    var receivedResult: Int?
+
+    func reset() {
+        receivedResult = nil
+    }
+    
+    func setResult(_ value: Int) {
+        receivedResult = value
+    }
+    
+    func getResult() -> Int? {
+        return receivedResult
+    }
+}
+
+// MARK: - Basic Branch Protocol (Reordered)
+// Here the outer Choose is defined with the failure branch on the left,
+// and the success branch (an Offer with two inner branches) on the right.
+// This matches the dual ordering of the ATM protocol.
+enum BasicBranchProtocol {
+    // The server receives an Int then chooses one of two outer branches:
+    // • Left branch: a failure branch (Close) used if the number is negative.
+    // • Right branch: a successful branch (Offer) containing:
+    //       - Left inner branch: if number == 5, send (number + 1).
+    //       - Right inner branch: otherwise, send (number - 1).
+    typealias BranchServer =
+        Recv<Int,
+             Choose<
+                 Close,  // Left outer branch: failure.
+                 Offer<
+                     Send<Int, Close>, // Left inner branch: addition.
+                     Send<Int, Close>  // Right inner branch: subtraction.
+                 >
+             >
+        >
+}
+
+// MARK: - Basic Branch Interface (Client)
+// This code mirrors the ATMInterface style. It sends the test number,
+// then calls session.offer on the returned endpoint and switches on the outer choice.
+final class BasicBranchInterface: Sendable {
+    @Sendable public func startInteraction(
+        _ endpoint: consuming BasicBranchProtocol.BranchServer.Dual,
+        using session: Session.Dual
+    ) async {
+        // Send the test number.
+        let testNumber = 5    // With 5 we expect the "addition" outcome.
+        let branchEndpoint = await session.send(testNumber, on: endpoint)
+        
+        // Receive the outer branch decision.
+        let outerChoice = await session.offer(branchEndpoint)
+        switch consume outerChoice {
+        case .left(let failureEndpoint):
+            // Failure branch was chosen; simply close the channel.
+            session.close(failureEndpoint)
+        case .right(let offer):
+            // Successful branch: we got an Offer.
+            // Since testNumber is 5, we expect the addition branch (left).
+            let addEndpoint = await session.left(offer)
+            let resultTuple = await session.recv(from: addEndpoint)
+            let result = resultTuple.getValue()
+            await BasicBranchState.shared.setResult(result)
+            session.close(resultTuple.getEndpoint())
+        }
+    }
+}
+
+// MARK: - Basic Branch Controller (Server)
+// This implementation is modeled on the ATMController.
+// The controller receives the number and then chooses which branch to take.
+final class BasicBranchController: @unchecked Sendable {
+    @Sendable public func startInteraction(
+        _ endpoint: consuming BasicBranchProtocol.BranchServer,
+        using session: Session.Type
+    ) async {
+        // Receive the number from the client.
+        let numberTuple = await session.recv(from: endpoint)
+        let number = numberTuple.getValue()
+        let branchEndpoint = numberTuple.getEndpoint()
+        
+        if number < 0 {
+            // Negative number: choose the failure branch.
+            let failureEndpoint = await Session.left(branchEndpoint)
+            Session.close(failureEndpoint)
+        } else {
+            // Non-negative: choose the successful branch (right).
+            let offer = await session.right(branchEndpoint)
+            if number == 5 {
+                // For number == 5, choose the left inner branch (addition).
+                let addEndpoint = await session.left(offer)
+                let result = number + 1    // 5 + 1 = 6.
+                let finalEndpoint = await session.send(result, on: addEndpoint)
+                session.close(finalEndpoint)
+            } else {
+                // Otherwise, choose the right inner branch (subtraction).
+                let subtractEndpoint = await session.right(offer)
+                let result = number - 1
+                let finalEndpoint = await session.send(result, on: subtractEndpoint)
+                session.close(finalEndpoint)
+            }
+        }
+    }
+}
+
+// MARK: - Test Case for the Basic Branch Interaction
+@Test func basicBranchTest() async throws {
+    // Reset shared test state.
+    await BasicBranchState.shared.reset()
+    
+    // Create the session with the controller (server) and interface (client).
+    await Session.create(
+        BasicBranchController().startInteraction,
+        BasicBranchInterface().startInteraction
+    )
+    
+    // Retrieve and verify the result.
+    let result = await BasicBranchState.shared.getResult()
+    
+    // For testNumber 5, we expect the result to be 6.
+    #expect(result != nil)
+    #expect(result! == 6)
+}
