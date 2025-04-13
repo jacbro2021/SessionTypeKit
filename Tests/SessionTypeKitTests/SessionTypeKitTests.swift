@@ -185,17 +185,24 @@ final class BasicBranchController: @unchecked Sendable {
             let offer = await session.left(branchEndpoint)
             if number == 5 {
                 // For number == 5, choose the left inner branch (addition).
-                let addEndpoint = await session.left(offer)
+                let addEndpoint = await session.offer(offer)
                 let result = number + 1    // 5 + 1 = 6.
-                let finalEndpoint = await session.send(result, on: addEndpoint)
-                session.close(finalEndpoint)
-            } else {
-                // Otherwise, choose the right inner branch (subtraction).
-                let subtractEndpoint = await session.right(offer)
-                let result = number - 1
-                let finalEndpoint = await session.send(result, on: subtractEndpoint)
-                session.close(finalEndpoint)
-            }
+                
+                switch consume addEndpoint {
+                case .left(let left):
+                    let finalEndpoint = await session.send(result, on: left)
+                    session.close(finalEndpoint)
+                case .right(let right):
+                    let finalEndpoint = await session.send(result, on: right)
+                    session.close(finalEndpoint)
+                }
+//            } else {
+//                // Otherwise, choose the right inner branch (subtraction).
+//                let subtractEndpoint = await session.right(offer)
+//                let result = number - 1
+//                let finalEndpoint = await session.send(result, on: subtractEndpoint)
+//                session.close(finalEndpoint)
+//            }
         }
     }
 }
