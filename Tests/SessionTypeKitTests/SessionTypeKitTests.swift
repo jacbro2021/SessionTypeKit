@@ -124,11 +124,11 @@ enum BasicBranchProtocol {
     typealias BranchServer =
         Recv<Int,
              Choose<
-                 Close,  // Left outer branch: failure.
                  Offer<
                      Send<Int, Close>, // Left inner branch: addition.
                      Send<Int, Close>  // Right inner branch: subtraction.
-                 >
+                 >,
+                Close
              >
         >
 }
@@ -148,10 +148,10 @@ final class BasicBranchInterface: Sendable {
         // Receive the outer branch decision.
         let outerChoice = await session.offer(branchEndpoint)
         switch consume outerChoice {
-        case .left(let failureEndpoint):
+        case .right(let failureEndpoint):
             // Failure branch was chosen; simply close the channel.
             session.close(failureEndpoint)
-        case .right(let offer):
+        case .left(let offer):
             // Successful branch: we got an Offer.
             // Since testNumber is 5, we expect the addition branch (left).
             let addEndpoint = await session.left(offer)
@@ -178,11 +178,11 @@ final class BasicBranchController: @unchecked Sendable {
         
         if number < 0 {
             // Negative number: choose the failure branch.
-            let failureEndpoint = await Session.left(branchEndpoint)
+            let failureEndpoint = await Session.right(branchEndpoint)
             Session.close(failureEndpoint)
         } else {
             // Non-negative: choose the successful branch (right).
-            let offer = await session.right(branchEndpoint)
+            let offer = await session.left(branchEndpoint)
             if number == 5 {
                 // For number == 5, choose the left inner branch (addition).
                 let addEndpoint = await session.left(offer)
