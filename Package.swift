@@ -46,5 +46,10 @@ let package = Package(
             dependencies: ["SwiftSessionTypes"],
             path: "Sources/Examples/Basic-Example"
         ),
+        .executableTarget(
+            name: "FTP",
+            dependencies: ["SessionTypeKit"],
+            path: "Sources/Examples/FTP"
+            ),
     ]
 )
