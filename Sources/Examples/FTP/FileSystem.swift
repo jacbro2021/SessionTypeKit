@@ -28,8 +28,10 @@ final class FileSystem {
         files[filename] = File(name: filename, contents: contents)
         return "ok"
     }
-
-    func listFiles() -> [String] {
-        return Array(files.keys)
+    
+    func dump() {
+        for (name, file) in files {
+            print("File: \(name), Contents: \(file.contents)")
+        }
     }
 }
