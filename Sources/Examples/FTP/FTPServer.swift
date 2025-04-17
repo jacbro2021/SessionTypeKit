@@ -27,7 +27,7 @@ final class FTPServer: @unchecked Sendable {
         case .left(let putEndpoint):
             let putCoupling = await session.recv(from: putEndpoint)
             let rawText = putCoupling.getValue()
-            let replyEP = putCoupling.getEndpoint()
+            let replyEndpoint = putCoupling.getEndpoint()
 
             let tokens = rawText.split(separator: " ")
             guard tokens.count >= 2 else {
@@ -37,20 +37,19 @@ final class FTPServer: @unchecked Sendable {
             let contents = tokens.dropFirst().joined(separator: " ")
 
             _ = fs.put(filename: filename, contents: contents)
-            let nextEP = await session.send("ok", on: replyEP)
-            // Dump the file system state
+            let nextEndpoint = await session.send("ok", on: replyEndpoint)
             print("File system state after PUT:")
             fs.dump()
-            session.close(nextEP)
+            session.close(nextEndpoint)
 
         case .right(let getEndpoint):
             let getCoupling = await session.recv(from: getEndpoint)
             let filename = getCoupling.getValue()
-            let replyEP = getCoupling.getEndpoint()
+            let replyEndpoint = getCoupling.getEndpoint()
 
             let result = fs.get(filename: filename) ?? "File not found"
-            let nextEP = await session.send(result, on: replyEP)
-            session.close(nextEP)
+            let nextEndpoint = await session.send(result, on: replyEndpoint)
+            session.close(nextEndpoint)
         }
     }
 }
