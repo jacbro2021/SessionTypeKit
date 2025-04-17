@@ -17,7 +17,11 @@ final class FTPServer: @unchecked Sendable {
       _ endpoint: consuming FTPProtocol.FtpServer,
       using session: Session.Type
     ) async {
+
+        
         let chooseEndpoint = await session.offer(endpoint)
+        print("Current file system state")
+        print(fs.dump())
 
         switch consume chooseEndpoint {
         case .left(let putEndpoint):
@@ -32,8 +36,11 @@ final class FTPServer: @unchecked Sendable {
             let filename = String(tokens[0])
             let contents = tokens.dropFirst().joined(separator: " ")
 
-            _ = fs.put(filename: filename, contents: contents)  // returns "ok"
+            _ = fs.put(filename: filename, contents: contents)
             let nextEP = await session.send("ok", on: replyEP)
+            // Dump the file system state
+            print("File system state after PUT:")
+            print(fs.dump())
             session.close(nextEP)
 
         case .right(let getEndpoint):
