@@ -21,7 +21,7 @@ final class FTPServer: @unchecked Sendable {
         
         let chooseEndpoint = await session.offer(endpoint)
         print("Current file system state")
-        print(fs.dump())
+        fs.dump()
 
         switch consume chooseEndpoint {
         case .left(let putEndpoint):
@@ -40,7 +40,7 @@ final class FTPServer: @unchecked Sendable {
             let nextEP = await session.send("ok", on: replyEP)
             // Dump the file system state
             print("File system state after PUT:")
-            print(fs.dump())
+            fs.dump()
             session.close(nextEP)
 
         case .right(let getEndpoint):
