@@ -29,7 +29,7 @@ final class FileSystem {
         return "ok"
     }
     
-    func dump() {
+    func dump() -> Void {
         for (name, file) in files {
             print("File: \(name), Contents: \(file.contents)")
         }
