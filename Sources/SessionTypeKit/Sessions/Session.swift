@@ -10,8 +10,6 @@ import Foundation
 
 /// A utility class for implementing session-based communications using channels
 public enum Session {
-    public typealias Dual = DualSession.Type
-
     /// Creates a new session with two dual endpoints and executes the provided closures on each endpoint
     ///
     /// This method initializes a pair of dual endpoints and concurrently executes the provided closures.
@@ -24,7 +22,7 @@ public enum Session {
     public static func create <A: ~Copyable, B: ~Copyable> (_ sideOne: @Sendable @escaping (_: consuming Endpoint<B, A>,
                                                                                             _ session: Session.Type) async -> Void,
                                                             _ sideTwo: @Sendable @escaping (_: consuming Endpoint<A, B>,
-                                                                                            _ session: Session.Dual) async -> Void)
+                                                                                            _ session: DualSession.Type) async -> Void)
         async
     {
         let channel: AsyncChannel<Sendable> = AsyncChannel()
