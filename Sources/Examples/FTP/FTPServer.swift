@@ -1,11 +1,11 @@
 //
-//  File.swift
-//  SessionTypeKit
+//  FTPServer.swift
+//  SwiftSessionTypes
 //
-//  Created by AlecNipp on 4/17/25.
+//  Created by Alec Nipp on 4/17/25.
 //
 
-import SessionTypeKit
+import SwiftSessionTypes
 
 final class FTPServer: @unchecked Sendable {
     let fs = FileSystem(initialFiles: [

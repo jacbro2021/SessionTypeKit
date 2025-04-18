@@ -1,10 +1,10 @@
 //
-//  File.swift
-//  SessionTypeKit
+//  main.swift
+//  SwiftSessionTypes
 //
-//  Created by AlecNipp on 4/17/25.
+//  Created by Alec Nipp on 4/17/25.
 //
 
-import SessionTypeKit
+import SwiftSessionTypes
 
 await Session.create(FTPServer().startFTPInteraction, FTPClient().startFTPInteraction)

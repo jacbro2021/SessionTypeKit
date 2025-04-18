@@ -1,6 +1,6 @@
 //
-//  File.swift
-//  SessionTypeKit
+//  FileSystem.swift
+//  SwiftSessionTypes
 //
 //  Created by AlecNipp on 4/17/25.
 //

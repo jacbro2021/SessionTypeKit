@@ -1,11 +1,11 @@
 //
-//  File.swift
-//  SessionTypeKit
+//  FTPProtocol.swift
+//  SwiftSessionTypes
 //
 //  Created by AlecNipp on 4/17/25.
 //
 
-import SessionTypeKit
+import SwiftSessionTypes
 
 enum FTPProtocol {
     typealias FtpPut = Recv<String, Send<String, Close>>

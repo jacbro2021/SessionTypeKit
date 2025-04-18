@@ -1,11 +1,11 @@
 //
-//  File.swift
-//  SessionTypeKit
+//  FTPClient.swift
+//  SwiftSessionTypes
 //
 //  Created by AlecNipp on 4/17/25.
 //
 
-import SessionTypeKit
+import SwiftSessionTypes
 
 enum FTPCommand: CustomStringConvertible {
     case put(String, String)
