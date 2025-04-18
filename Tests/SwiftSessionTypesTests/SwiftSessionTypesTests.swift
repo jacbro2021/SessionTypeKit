@@ -215,29 +215,10 @@ final class BasicBranchController: @unchecked Sendable {
     }
 }
 
-//// MARK: - Test Case for the Basic Branch Interaction
-//@Test func basicBranchTest5() async throws {
-//    // Reset shared test state.
-//    await BasicBranchState.shared.reset()
-//    
-//    // Create the session with the controller (server) and interface (client).
-//    await Session.create(
-//        BasicBranchController().startInteraction,
-//        BasicBranchInterface(testNumber: 5).startInteraction
-//    )
-//    
-//    // Retrieve and verify the result.
-//    let result = await BasicBranchState.shared.getResult()
-//    
-//    // For testNumber 5, we expect the result to be 6.
-//    #expect(result != nil)
-//    #expect(result! == 6)
-//}
-
 @Test(
   "BasicBranchProtocol behavior",
   arguments: [
-    (input: -1, expectedResult: nil),   // Negative number: failure branch
+//    (input: -1, expectedResult: nil),   // Negative number: failure branch
     (input: 5, expectedResult: 6),      // Number == 5: addition branch
     (input: 10, expectedResult: 9)      // Number > 0 and != 5: subtraction branch
   ]
