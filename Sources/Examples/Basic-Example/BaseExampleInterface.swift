@@ -9,7 +9,7 @@ import SessionTypeKit
 final class BaseExampleInterface: Sendable {
     @Sendable public func startInteraction(
         _ endpoint: consuming BaseExampleProtocol.BaseServer.Dual,
-        using session: Session.Dual
+        using session: DualSession.Type
     ) async {
         // 1. Send a number to the server.
         let clientNumber = 42  // You can replace 42 with any number or input mechanism.

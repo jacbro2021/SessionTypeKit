@@ -26,7 +26,7 @@ actor TestBaseExampleState {
 final class TestBaseExampleInterface: Sendable {
     @Sendable public func startInteraction(
         _ endpoint: consuming TestBaseExampleProtocol.BaseServer.Dual,
-        using session: Session.Dual
+        using session: DualSession.Type
     ) async {
         // 1. Send the number to the server.
         let clientNumber = 42
@@ -145,7 +145,7 @@ final class BasicBranchInterface: Sendable {
 
     @Sendable public func startInteraction(
         _ endpoint: consuming BasicBranchProtocol.BranchServer.Dual,
-        using session: Session.Dual
+        using session: DualSession.Type
     ) async {
         // Send the test number.
         let branchEndpoint = await session.send(testNumber, on: endpoint)
