@@ -2,13 +2,13 @@
 
 ## Overview
 
-SessionTypeKit is a Session Type package designed for Swift 6.0. This package was developed by three UNC Chapel Hill computer science students (Jacob Brown, Noah Frahm, and Alec Nipp) as our final project for UNC's COMP 730 course. This library was developed from a fork of an existing Swift session type library, *SwiftSessions* **Insert Link Here**, Developed by **Insert name here**. 
+SessionTypeKit is a Session Type package designed for Swift 6.0. This package was developed by three UNC Chapel Hill computer science students (Jacob Brown, Noah Frahm, and Alec Nipp) as our final project for UNC's COMP 730 course. This library was developed from a fork of an existing Swift session type library, *SwiftSessions* [*SwiftSessions*](https://github.com/alessiorubicini/SwiftSessions), Developed by Alessio Rubicini. 
 
 SessionTypeKit expands upon the functionality and usability offered in by SwiftSessions using features recently introduced to the Swift community such as non copyable generics, semantics that more closely replicate session types in other languages such as Rust, and the migration of the packages unit testing suite from XCTest to Swift Testing. 
 
 ## Usage
 
-Several toy examples have been included in the Sources/Examples **Make this a link** folder. 
+Several toy examples have been included in the [Examples](Sources/Examples) folder. 
 
 The package provides interfaces for defining binary session types in a protocol-like manner, and implementing these session types for IPC. The package provides an interface for the following operations 
 
@@ -87,20 +87,20 @@ Where the two arguments to the `.create()` method are the names of our two imple
 
 ### Futher examples 
 
-The Source/Examples **Add Link Here** folder has two other example usages of this package (a mock ATM and a mock FTP example) to further illustrate its usage. 
+The [Examples](Source/Examples) folder has two other example usages of this package (a mock ATM and a mock FTP example) to further illustrate its usage. 
 
 # Design Decisions
 
 ### usage of non copyable generics
-Swift 6.0 featured the release of non copyable generic types. SessionTypeKit utilizes non copyable generics to ensure the *linearity* property provided by session types. That is, every endpoint can only be used a single time. 
+Swift 6.0 featured the release of non copyable generic types. SessionTypeKit utilizes non copyable generics to ensure the *linearity* property provided by session types. That is, every endpoint can only be used (consumed) a single time. 
 
 ### `Session` vs. `DualSession`
 This package uses the classes `Session` and `DualSession` to implement the binary operations provided by session types from the perspective of the primary and dual implementation respectively. The only differences between these two classes is that the return types of some of their methods have "flipped" generics. This is an abstraction that we recognize as potentially making usage confusing to the user. Please check the future work section to see how this could be improved in the future as Swift expands the functionality of non copyable types.
 
 # Future Work
 
-### Improvements to Dual Generation
-Swift evolution proposal SE-0427 **Insert Link Here** Introduced non-copyable types and several ways that they can be used. One area where this proposal falls short is in allowing associated types to suppress their copyable conformance. For example, the following code snippet:
+### Potential Improvements to Dual Generation
+[Swift evolution proposal SE-0427](https://github.com/swiftlang/swift-evolution/blob/main/proposals/0427-noncopyable-generics.md) Introduced non-copyable types and several ways that they can be used. One area where this proposal falls short is in allowing associated types to suppress their copyable conformance. For example, the following code snippet:
 
 ```
 public protocol SessionEndpoint: ~Copyable {
