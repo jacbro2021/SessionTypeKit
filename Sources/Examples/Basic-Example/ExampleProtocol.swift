@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SessionTypeKit
+import SwiftSessionTypes
 
 enum ExampleProtocol {
     typealias proto =

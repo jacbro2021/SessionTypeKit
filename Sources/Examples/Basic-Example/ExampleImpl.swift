@@ -5,7 +5,7 @@
 //  Created by jacob brown on 4/3/25.
 //
 
-import SessionTypeKit
+import SwiftSessionTypes
 
 @Sendable func exampleImplementation(_ endpoint: consuming ExampleProtocol.proto,
                                      _ session: Session.Type) async

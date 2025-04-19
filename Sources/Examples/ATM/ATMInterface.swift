@@ -5,7 +5,7 @@
 //  Created by jacob brown on 4/3/25.
 //
 
-import SessionTypeKit
+import SwiftSessionTypes
 
 final class ATMInterface: Sendable {
     @Sendable public func startATMInteraction(_ endpoint: consuming ATMProtocol.AtmServer.Dual,

@@ -5,7 +5,7 @@
 //  Created by jacob brown on 4/3/25.
 //
 
-import SessionTypeKit
+import SwiftSessionTypes
 
 @Sendable func exampleImplementationDual(_ endpoint: consuming ExampleProtocol.proto.Dual,
                                          _ session: DualSession.Type) async

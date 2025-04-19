@@ -5,7 +5,7 @@
 //  Created by jacob brown on 4/3/25.
 //
 
-import SessionTypeKit
+import SwiftSessionTypes
 
 final class ATMController: @unchecked Sendable {
     var bankAccount: BankAccount!

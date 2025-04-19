@@ -1,10 +1,10 @@
-# SessionTypeKit 
+# SwiftSessionTypes 
 
 ## Overview
 
-SessionTypeKit is a Session Type package designed for Swift 6.0. This package was developed by three UNC Chapel Hill computer science students (Jacob Brown, Noah Frahm, and Alec Nipp) as our final project for UNC's COMP 730 course. This library was developed from a fork of an existing Swift session type library, *SwiftSessions* [*SwiftSessions*](https://github.com/alessiorubicini/SwiftSessions), Developed by Alessio Rubicini. 
+SwiftSessionTypes is a session type package designed for Swift 6.0. This package was developed by three UNC Chapel Hill computer science students (Jacob Brown, Noah Frahm, and Alec Nipp) as our final project for UNC's COMP 730 course. This package was developed from a fork of an existing Swift session type library, *SwiftSessions* [*SwiftSessions*](https://github.com/alessiorubicini/SwiftSessions), Developed by Alessio Rubicini. 
 
-SessionTypeKit expands upon the functionality and usability offered in by SwiftSessions using features recently introduced to the Swift community such as non copyable generics, semantics that more closely replicate session types in other languages such as Rust, and the migration of the packages unit testing suite from XCTest to Swift Testing. 
+SwiftSessionTypes expands upon the functionality and usability offered in by SwiftSessions using features recently introduced to the Swift community such as non copyable generics, semantics that more closely replicate session types in other languages such as Rust, and the migration of the packages unit testing suite from XCTest to Swift Testing. 
 
 ## Usage
 
@@ -58,7 +58,7 @@ After creating our protocol, we can then create the function that will implement
 
 ### Step 3
 
-For every protocol we define, SessionTypeKit can also generate the dual (opposite) of that protocol to be implemented as well. To implement the Dual, we follow a process very similar to step 3. We will need to define an asynchronous, @Sendable, function that accepts two parameters. The first parameter will be of the Dual type of our protocol (i.e ExampleProtocol.proto.Dual in our example), as well as a second argument with the type of DualSession.Type.
+For every protocol we define, SwiftSessionTypes can also generate the dual (opposite) of that protocol to be implemented as well. To implement the Dual, we follow a process very similar to step 3. We will need to define an asynchronous, @Sendable, function that accepts two parameters. The first parameter will be of the Dual type of our protocol (i.e ExampleProtocol.proto.Dual in our example), as well as a second argument with the type of DualSession.Type.
 
 ```
 @Sendable func exampleImplementationDual(_ endpoint: consuming ExampleProtocol.proto.Dual,
@@ -92,7 +92,7 @@ The [Examples](Source/Examples) folder has two other example usages of this pack
 # Design Decisions
 
 ### usage of non copyable generics
-Swift 6.0 featured the release of non copyable generic types. SessionTypeKit utilizes non copyable generics to ensure the *linearity* property provided by session types. That is, every endpoint can only be used (consumed) a single time. 
+Swift 6.0 featured the release of non copyable generic types. SwiftSessionTypes utilizes non copyable generics to ensure the *linearity* property provided by session types. That is, every endpoint can only be used (consumed) a single time. 
 
 ### `Session` vs. `DualSession`
 This package uses the classes `Session` and `DualSession` to implement the binary operations provided by session types from the perspective of the primary and dual implementation respectively. The only differences between these two classes is that the return types of some of their methods have "flipped" generics. This is an abstraction that we recognize as potentially making usage confusing to the user. Please check the future work section to see how this could be improved in the future as Swift expands the functionality of non copyable types.

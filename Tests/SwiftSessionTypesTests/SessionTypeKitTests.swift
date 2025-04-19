@@ -1,6 +1,6 @@
 import Testing
 import Foundation
-@testable import SessionTypeKit
+@testable import SwiftSessionTypes
 
 // MARK: - Concurrency‑Safe Test State
 actor TestBaseExampleState {
