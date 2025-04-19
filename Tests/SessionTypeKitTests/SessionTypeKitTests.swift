@@ -26,7 +26,7 @@ actor TestBaseExampleState {
 final class TestBaseExampleInterface: Sendable {
     @Sendable public func startInteraction(
         _ endpoint: consuming TestBaseExampleProtocol.BaseServer.Dual,
-        using session: Session.Dual
+        using session: DualSession.Type
     ) async {
         // 1. Send the number to the server.
         let clientNumber = 42
@@ -139,7 +139,7 @@ enum BasicBranchProtocol {
 final class BasicBranchInterface: Sendable {
     @Sendable public func startInteraction(
         _ endpoint: consuming BasicBranchProtocol.BranchServer.Dual,
-        using session: Session.Dual
+        using session: DualSession.Type
     ) async {
         // Send the test number.
         let testNumber = 5    // With 5 we expect the "addition" outcome.
@@ -196,32 +196,33 @@ final class BasicBranchController: @unchecked Sendable {
                     let finalEndpoint = await session.send(result, on: right)
                     session.close(finalEndpoint)
                 }
-//            } else {
-//                // Otherwise, choose the right inner branch (subtraction).
-//                let subtractEndpoint = await session.right(offer)
-//                let result = number - 1
-//                let finalEndpoint = await session.send(result, on: subtractEndpoint)
-//                session.close(finalEndpoint)
-//            }
+                //            } else {
+                //                // Otherwise, choose the right inner branch (subtraction).
+                //                let subtractEndpoint = await session.right(offer)
+                //                let result = number - 1
+                //                let finalEndpoint = await session.send(result, on: subtractEndpoint)
+                //                session.close(finalEndpoint)
+                //            }
+            }
         }
     }
-}
-
-// MARK: - Test Case for the Basic Branch Interaction
-@Test func basicBranchTest() async throws {
-    // Reset shared test state.
-    await BasicBranchState.shared.reset()
     
-    // Create the session with the controller (server) and interface (client).
-    await Session.create(
-        BasicBranchController().startInteraction,
-        BasicBranchInterface().startInteraction
-    )
-    
-    // Retrieve and verify the result.
-    let result = await BasicBranchState.shared.getResult()
-    
-    // For testNumber 5, we expect the result to be 6.
-    #expect(result != nil)
-    #expect(result! == 6)
+    // MARK: - Test Case for the Basic Branch Interaction
+    @Test func basicBranchTest() async throws {
+        // Reset shared test state.
+        await BasicBranchState.shared.reset()
+        
+        // Create the session with the controller (server) and interface (client).
+        await Session.create(
+            BasicBranchController().startInteraction,
+            BasicBranchInterface().startInteraction
+        )
+        
+        // Retrieve and verify the result.
+        let result = await BasicBranchState.shared.getResult()
+        
+        // For testNumber 5, we expect the result to be 6.
+        #expect(result != nil)
+        #expect(result! == 6)
+    }
 }
