@@ -90,10 +90,10 @@ public extension Session {
     /// - Returns: The continuation endpoint
     static func send<A: Sendable, B: ~Copyable, C: ~Copyable>(_ payload: A,
                                                               on endpoint: consuming Endpoint<Coupling<A, Endpoint<B, C>>, Empty>)
-        async -> Endpoint<C, B>
+        async -> Endpoint<B, C>
     {
         await endpoint.send(payload)
-        return Endpoint<C, B>(from: endpoint)
+        return Endpoint<B, C>(from: endpoint)
     }
 
     /// Receives a message from the endpoint and returns it along with the continuation endpoint.

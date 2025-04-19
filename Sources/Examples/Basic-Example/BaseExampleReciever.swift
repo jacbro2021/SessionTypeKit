@@ -7,11 +7,15 @@
 
 import SessionTypeKit
 
-final class BaseExampleReceiver: Sendable {
-    @Sendable func start(_ endpoint: consuming BaseExampleProtocol.proto) async {
-        let tup = await Session.recv(from: endpoint)
-        print("Recieved value: \(tup.getValue())")
-        let end = tup.getEndpoint()
-        Session.close(end)
-    }
+@Sendable func exampleImplementationDual(_ endpoint: consuming ExampleProtocol.proto.Dual,
+                                         _ session: DualSession.Type) async
+{
+    let messageCoupling = await session.recv(from: endpoint)
+    
+    print("Dual implementation received message: \(messageCoupling.getValue())")
+    let responseEndpoint = await session.left(messageCoupling.getEndpoint())
+    
+    let end = await session.send("world", on: responseEndpoint)
+    
+    session.close(end)
 }

@@ -102,9 +102,9 @@ extension DualSession {
     /// - Parameter endpoint: The endpoint from which the message is received. This endpoint is consumed.
     /// - Returns: A tuple containing the received message and the continuation endpoint.
     public static func recv<A, B: ~Copyable, C: ~Copyable>(from endpoint: consuming Endpoint<Empty, Coupling<A, Endpoint<B, C>>>)
-        async -> Coupling<A, Endpoint<B, C>>
+        async -> Coupling<A, Endpoint<C, B>>
     {
         let msg = await endpoint.recv()
-        return Coupling(msg as! A, Endpoint<B, C>(from: endpoint))
+        return Coupling(msg as! A, Endpoint<C, B>(from: endpoint))
     }
 }

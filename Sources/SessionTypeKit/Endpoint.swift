@@ -40,13 +40,6 @@ public struct Endpoint<A: ~Copyable, B: ~Copyable>: ~Copyable {
     public var description: String {
         "Endpoint<\(A.self), \(B.self)>"
     }
-    
-    /// creates a new endpoint from the current instance, consuming the current instance in the process.
-    ///
-    /// The new endpoint is the dual of the current instance.
-    public consuming func flip() -> Dual {
-        .init(with: channel)
-    }
 }
 
 public extension Endpoint where A == Empty, B: ~Copyable {

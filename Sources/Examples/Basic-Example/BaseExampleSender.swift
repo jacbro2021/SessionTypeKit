@@ -7,13 +7,19 @@
 
 import SessionTypeKit
 
-final class BaseExampleSender: Sendable {
-    @Sendable func start(_ endpoint: consuming BaseExampleProtocol.proto.Dual) async {
-        let val = 2
-        let end = await Session.send(val, on: endpoint)
-        /// Uncomment the below line to see an example of the error that appears
-        ///  as a result of violating the linearity constraint of session types.
-//        let consumptionError = await Session.send(val, on: endpoint)
-        Session.close(end)
+@Sendable func exampleImplementation(_ endpoint: consuming ExampleProtocol.proto,
+                                     _ session: Session.Type) async
+{
+    let offerEndpoint = await session.send("Hello", on: endpoint)
+    let choice = await session.offer(offerEndpoint)
+    
+    switch consume choice {
+    case .left(let responseEndpoint):
+        let response = await session.recv(from: responseEndpoint)
+        print("Primary implementation received: \(response.getValue())")
+        session.close(response.getEndpoint())
+        
+    case .right(let end):
+        session.close(end)
     }
 }
