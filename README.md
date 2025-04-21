@@ -110,7 +110,7 @@ public protocol SessionEndpoint: ~Copyable {
 }
 ```
 
-produces the error `Cannot suppress 'Copyable' requirement of an associated type`. Expanding the functionality of non copyable types such that associated types could supress copyable conformance would allow for improved usability throughout this package. 
+produces the error `Cannot suppress 'Copyable' requirement of an associated type`. Expanding the functionality of non copyable types such that associated types could supress copyable conformance would allow for improved usability throughout this package by enabling recursive dual generation and checking.
 
 ### Configurable Underlying Channels 
 
