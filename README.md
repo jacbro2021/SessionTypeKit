@@ -2,7 +2,8 @@
     alt="logo" 
     width=300>
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE) [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fjacbro2021%2FSwiftSessionTypes%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/jacbro2021/SwiftSessionTypes) [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fjacbro2021%2FSwiftSessionTypes%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/jacbro2021/SwiftSessionTypes)
 
 ## Overview
 
