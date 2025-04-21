@@ -1,8 +1,6 @@
-# SwiftSessionTypes 
-
-<div align=center>
-    <img src="./official_logo.png" width=300>
-</div>
+<img src="./official_logo.png" 
+    alt="logo" 
+    width=300>
 
 ## Overview
 
