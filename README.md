@@ -2,6 +2,8 @@
     alt="logo" 
     width=300>
 
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+
 ## Overview
 
 SwiftSessionTypes is a session type package designed for Swift 6.0. This package was developed by three UNC Chapel Hill computer science students (Jacob Brown, Noah Frahm, and Alec Nipp) as our final project for UNC's COMP 730 course. This package was developed from a fork of an existing Swift session type library, *SwiftSessions* [*SwiftSessions*](https://github.com/alessiorubicini/SwiftSessions), Developed by Alessio Rubicini. 
