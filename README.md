@@ -119,3 +119,13 @@ produces the error `Cannot suppress 'Copyable' requirement of an associated type
 Because the package already heavily relies on asynchronous programming, the underlying communication channel could be changed to be configurable at run time. an implemenation could allow these channels to communicate for uses outside of IPC using various networking protocols. 
 
 Additionally, a synchronous version of this package could be useful and would have better performance for some uses than the current async focused implementation. 
+
+# Requirements
+
+Swift 6.0+
+Xcode 15+
+Compatible with iOS 14.0+ / macOS 10.15+ / tvOS 14.0+ / watchOS 6.0+
+
+# License
+
+This project is licensed under the MIT License. See the LICENSE file for more details.
