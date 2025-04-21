@@ -27,15 +27,13 @@ The package provides interfaces for defining binary session types in a protocol-
 Below we define an example session type where an string is sent, and then either a string is sent back, or the channel is closed.
 
 ```
-enum ExampleProtocol {
-    typealias proto = 
+typealias protocol = 
     Send<Int, 
         Offer<
             Recv<Int, Close>, 
             Close
         >
     >
-}
 ```
 
 ### Step 2
@@ -43,7 +41,7 @@ enum ExampleProtocol {
 After creating our protocol, we can then create the function that will implement it. To implement a session type, we define a @Sendable function that accepts two arguments. The first argument is the session type that we previously defined. The second argument will need to have the type `Session.Type`. This function will also need to be asynchronous because it yields on every session type operation and waits for the Dual implementation (which we will show next) to execute the opposite operation.
 
 ```
-@Sendable func exampleImplementation(_ endpoint: consuming ExampleProtocol.proto,
+@Sendable func exampleImplementation(_ endpoint: consuming protocol,
                                      _ session: Session.Type) async
 {
     let offerEndpoint = await session.send("Hello", on: endpoint)
@@ -66,7 +64,7 @@ After creating our protocol, we can then create the function that will implement
 For every protocol we define, SwiftSessionTypes can also generate the dual (opposite) of that protocol to be implemented as well. To implement the Dual, we follow a process very similar to step 3. We will need to define an asynchronous, @Sendable, function that accepts two parameters. The first parameter will be of the Dual type of our protocol (i.e ExampleProtocol.proto.Dual in our example), as well as a second argument with the type of DualSession.Type.
 
 ```
-@Sendable func exampleImplementationDual(_ endpoint: consuming ExampleProtocol.proto.Dual,
+@Sendable func exampleImplementationDual(_ endpoint: consuming protocol.Dual,
                                          _ session: DualSession.Type) async
 {
     let messageCoupling = await session.recv(from: endpoint)
