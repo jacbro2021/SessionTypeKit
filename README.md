@@ -17,10 +17,11 @@ Several toy examples have been included in the [Examples](Sources/Examples) fold
 
 The package provides interfaces for defining binary session types in a protocol-like manner, and implementing these session types for IPC. The package provides an interface for the following operations 
 
-- send 
-- receive 
-- offer (await a branching decision by the dual of the current implementation) 
-- choose (make a branching decision)
+- Send 
+- Receive 
+- Offer (await a branching decision by the dual of the current implementation) 
+- Choose (make a branching decision)
+- Close
 
 ### Step 1
 
@@ -28,9 +29,9 @@ Below we define an example session type where an string is sent, and then either
 
 ```
 typealias proto = 
-    Send<Int, 
+    Send<String, 
         Offer<
-            Recv<Int, Close>, 
+            Recv<String, Close>, 
             Close
         >
     >
@@ -111,7 +112,7 @@ public protocol SessionEndpoint: ~Copyable {
 }
 ```
 
-produces the error `Cannot suppress 'Copyable' requirement of an associated type`. Expanding the functionality of non copyable types such that associated types could supress copyable conformance would allow for improved usability throughout this package by enabling recursive dual generation and checking.
+produces the error `Cannot suppress 'Copyable' requirement of an associated type`. Expanding the functionality of non copyable types such that associated types could suppress copyable conformance would allow for improved usability throughout this package by enabling recursive dual generation and checking.
 
 ### Configurable Underlying Channels 
 
