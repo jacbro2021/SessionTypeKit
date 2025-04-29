@@ -137,14 +137,19 @@ enum BasicBranchProtocol {
 // This code mirrors the ATMInterface style. It sends the test number,
 // then calls session.offer on the returned endpoint and switches on the outer choice.
 final class BasicBranchInterface: Sendable {
+    let testNumber: Int
+
+    init(testNumber: Int) {
+        self.testNumber = testNumber
+    }
+
     @Sendable public func startInteraction(
         _ endpoint: consuming BasicBranchProtocol.BranchServer.Dual,
         using session: DualSession.Type
     ) async {
         // Send the test number.
-        let testNumber = 5    // With 5 we expect the "addition" outcome.
         let branchEndpoint = await session.send(testNumber, on: endpoint)
-        
+
         // Receive the outer branch decision.
         let outerChoice = await session.offer(branchEndpoint)
         switch consume outerChoice {
@@ -153,12 +158,21 @@ final class BasicBranchInterface: Sendable {
             session.close(failureEndpoint)
         case .left(let offer):
             // Successful branch: we got an Offer.
-            // Since testNumber is 5, we expect the addition branch (left).
-            let addEndpoint = await session.left(offer)
-            let resultTuple = await session.recv(from: addEndpoint)
-            let result = resultTuple.getValue()
-            await BasicBranchState.shared.setResult(result)
-            session.close(resultTuple.getEndpoint())
+            if testNumber == 5 {
+                // For number == 5, choose the left inner branch (addition).
+                let addEndpoint = await session.left(offer)
+                let resultTuple = await session.recv(from: addEndpoint)
+                let result = resultTuple.getValue()
+                await BasicBranchState.shared.setResult(result)
+                session.close(resultTuple.getEndpoint())
+            } else {
+                // For other numbers, choose the right inner branch (subtraction).
+                let subEndpoint = await session.right(offer)
+                let resultTuple = await session.recv(from: subEndpoint)
+                let result = resultTuple.getValue()
+                await BasicBranchState.shared.setResult(result)
+                session.close(resultTuple.getEndpoint())
+            }
         }
     }
 }
@@ -196,33 +210,36 @@ final class BasicBranchController: @unchecked Sendable {
                     let finalEndpoint = await session.send(result, on: right)
                     session.close(finalEndpoint)
                 }
-                //            } else {
-                //                // Otherwise, choose the right inner branch (subtraction).
-                //                let subtractEndpoint = await session.right(offer)
-                //                let result = number - 1
-                //                let finalEndpoint = await session.send(result, on: subtractEndpoint)
-                //                session.close(finalEndpoint)
-                //            }
             }
         }
     }
-    
-    // MARK: - Test Case for the Basic Branch Interaction
-    @Test func basicBranchTest() async throws {
-        // Reset shared test state.
-        await BasicBranchState.shared.reset()
-        
-        // Create the session with the controller (server) and interface (client).
-        await Session.create(
-            BasicBranchController().startInteraction,
-            BasicBranchInterface().startInteraction
-        )
-        
-        // Retrieve and verify the result.
-        let result = await BasicBranchState.shared.getResult()
-        
-        // For testNumber 5, we expect the result to be 6.
-        #expect(result != nil)
-        #expect(result! == 6)
-    }
+}
+
+@Test(
+  "BasicBranchProtocol behavior",
+  arguments: [
+//    (input: -1, expectedResult: nil),   // Negative number: failure branch
+    (input: 5, expectedResult: 6),      // Number == 5: addition branch
+    (input: 10, expectedResult: 9)      // Number > 0 and != 5: subtraction branch
+  ]
+)
+func testBasicBranchProtocolBehavior(input: Int, expectedResult: Int?) async throws {
+  // Reset shared test state
+  await BasicBranchState.shared.reset()
+
+  // Create the session with the controller (server) and interface (client)
+  await Session.create(
+    BasicBranchController().startInteraction,
+    BasicBranchInterface(testNumber: input).startInteraction
+  )
+
+  // Retrieve and verify the result
+  let result = await BasicBranchState.shared.getResult()
+
+  if let expected = expectedResult {
+    #expect(result != nil)
+    #expect(result! == expected)
+  } else {
+    #expect(result == nil)
+  }
 }

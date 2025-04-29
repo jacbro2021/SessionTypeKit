@@ -16,7 +16,6 @@ import SwiftSessionTypes
     switch consume choice {
     case .left(let responseEndpoint):
         let response = await session.recv(from: responseEndpoint)
-        response = await session.recv(from: responseEndpoint)
         print("Primary implementation received: \(response.getValue())")
         session.close(response.getEndpoint())
         
